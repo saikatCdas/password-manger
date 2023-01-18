@@ -52,7 +52,7 @@
                         />
                     </div>
                 </div>
-                <div>
+                <div class="mb-4">
                     <h2 class="block text-gray-600 font-medium mb-2">
                         Options
                     </h2>
@@ -109,6 +109,9 @@
                         </label>
                     </div>
                 </div>
+                <div >
+                    <button type="button" @click="copyText" class="text-gray-600 text-lg border border-gray-400 px-3 py-1 rounded-md ">Copy password</button>
+                </div>
             </form>
         </div>
     </div>
@@ -117,6 +120,7 @@
 <script setup>
 import { ref } from "@vue/reactivity";
 import { onMounted, watchEffect } from "@vue/runtime-core";
+import store from "../../store";
 
 const password = ref();
 const length = ref(14);
@@ -159,9 +163,15 @@ function generatePassword(length, minNumericChars, minSpecialChars, capitalLette
         possiblePassword += upperChars;
     }
 
-    //
-    if(capitalLetters){
-        possiblePassword += upperChars;
+    // if smallLetters
+    if(smallLetters){
+        possiblePassword += lowerChars;
+    }
+
+    console.log(possiblePassword);
+    // add the Lower and||or uppercase characters to the password
+    for (var i = 0; i < lengthForLetters; i++) {
+        password += possiblePassword.charAt(Math.floor(Math.random() * possiblePassword.length));
     }
 
     // add the specified number of special characters to the password
@@ -195,17 +205,36 @@ function shuffleString(str) {
 
 
 onMounted(()=>{
-    password.value = generatePassword(length.value, minNum.value, minSpecChar.value)
+    password.value = generatePassword(length.value, minNum.value, minSpecChar.value, capitalLetters.value, smallLetters.value)
 })
 
 function onChange () {
     // return if length is smaller than
-    if(lengthForLetters<0){
-        return 'You have give right number for special character and numbers'
+    if((length.value -(minNum.value + minSpecChar.value))< 0){
+        minNum.value = 0;
+        minSpecChar.value = 0;
+        store.commit("notify", {
+            type: "failed",
+            message: "You have given more number of special character and numbers than your password length.",
+        });
+        return ;
     }
-    password.value = generatePassword(length.value, minNum.value, minSpecChar.value)
+    password.value = generatePassword(length.value, minNum.value, minSpecChar.value, capitalLetters.value, smallLetters.value)
 }
 
+
+function copyText() {
+    navigator.clipboard.writeText(password.value)
+    .then(() => {
+        store.commit("notify", {
+            type: "success",
+            message: "Password copied successfully ",
+        });
+    })
+    .catch(err => {
+        console.error('Failed to password: ', err);
+    });
+}
 </script>
 
 <style>

@@ -20,7 +20,7 @@ const routes = [
         meta: { requiresAuth: true },
         children: [
             {path: '/vaults', name: 'Vaults', component: Vaults},
-            {path: '/tools', name: 'Tools', component: Tools,
+            {path: '/tools', redirect: '/tools/password-generator', name: 'Tools', component: Tools,
             children:[
                 {path: '/tools/password-generator', name:'PasswordGenerator', component:PasswordGenerator},
                 {path: '/tools/imports', name:'Imports', component:Imports},

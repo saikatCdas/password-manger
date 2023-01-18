@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\VaultController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +15,8 @@ use App\Http\Controllers\AuthController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::post('/import', [VaultController::class, 'import']);
+Route::get('/export', [VaultController::class, 'export']);
 
 Route::middleware('auth:sanctum')->group(function(){
     Route::get('/user', function (Request $request) {

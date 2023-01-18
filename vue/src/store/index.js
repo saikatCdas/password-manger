@@ -7,9 +7,22 @@ const store = createStore({
             data: '',
             token: sessionStorage.getItem("TOKEN"),
           },
+          notification: {
+            show: false,
+            type: 'success',
+            message: ''
+          },
+          exportUrl:{}
     },
     getters:{},
     actions:{
+        exportVault({commit}){
+            return axiosClient.get('export')
+                .then((res)=>{
+                    console.log(res.data);
+                    commit('setExportUrl', res.data);
+                })
+        },
         register({commit}, user) {
             return axiosClient.post('/register', user)
               .then(({data}) => {
@@ -36,6 +49,9 @@ const store = createStore({
           },
     },
     mutations:{
+        setExportUrl:(state, data) => {
+            state.exportUrl = data;
+        },
         setUser: (state, user) => {
             state.user.data = user;
         },
@@ -48,6 +64,14 @@ const store = createStore({
             state.user.token = null;
             state.user.data = {};
             sessionStorage.removeItem("TOKEN");
+        },
+        notify: (state, {message, type}) => {
+            state.notification.show = true;
+            state.notification.type = type;
+            state.notification.message = message;
+            setTimeout(() => {
+              state.notification.show = false;
+            }, 8000)
         },
     },
     modules:{}
