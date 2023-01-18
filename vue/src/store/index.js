@@ -12,21 +12,32 @@ const store = createStore({
             type: 'success',
             message: ''
           },
-          exportUrl:{}
+          exportUrl:{},
+          folders: [],
     },
     getters:{},
     actions:{
+        getFolder({commit}){
+            return axiosClient.get('/get-folder')
+                .then(({data})=>{
+                    commit('setFolderName', data)
+                })
+        },
+        createFolder({commit}, folderName){
+            return axiosClient.post('/create-folder', {name:folderName})
+                .then(({data})=>{
+                    commit('setFolderName', data);
+                })
+        },
         exportVault({commit}){
             return axiosClient.get('export')
                 .then((res)=>{
-                    console.log(res.data);
                     commit('setExportUrl', res.data);
                 })
         },
         register({commit}, user) {
             return axiosClient.post('/register', user)
               .then(({data}) => {
-                console.log(data.token);
                 commit('setUser', data.user);
                 commit('setToken', data.token)
                 return data;
@@ -49,6 +60,9 @@ const store = createStore({
           },
     },
     mutations:{
+        setFolderName:(state, data) => {
+            state.folders = data ;
+        },
         setExportUrl:(state, data) => {
             state.exportUrl = data;
         },
@@ -56,7 +70,6 @@ const store = createStore({
             state.user.data = user;
         },
         setToken: (state, token) => {
-            console.log(token);
             state.user.token = token;
             sessionStorage.setItem('TOKEN', token);
         },

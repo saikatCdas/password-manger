@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FolderController;
 use App\Http\Controllers\VaultController;
 
 /*
@@ -23,6 +24,8 @@ Route::middleware('auth:sanctum')->group(function(){
         return $request->user();
     });
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/create-folder', [FolderController::class, 'create']);
+    Route::get('/get-folder', [FolderController::class, 'allFolder']);
 });
 
 
