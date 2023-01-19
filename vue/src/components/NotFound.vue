@@ -5,7 +5,7 @@
           Page Not Found
       </div>
       <button class="mt-5">
-        <!-- <router-link :to="{name: 'Home'}"
+        <router-link :to="{name: 'Vaults'}"
           class="relative inline-block text-sm font-medium text-[#FF6A3D] group active:text-orange-500 focus:outline-none focus:ring"
         >
           <span
@@ -13,14 +13,18 @@
           ></span>
 
           <span class="relative block px-8 py-3 bg-[#1A2238] border border-current">
-            Go Home
+            Go To Vault
           </span>
-        </router-link> -->
+        </router-link>
       </button>
   </main>
   </template>
 
   <script setup>
+import { useRoute } from "vue-router";
+
+  const route = useRoute();
+//   console.log(route.);
   </script>
 
   <style>

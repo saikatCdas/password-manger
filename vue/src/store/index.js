@@ -15,17 +15,32 @@ const store = createStore({
           exportUrl:{},
           folders: [],
           vaultItems:{},
+          vaultItem:{},
           paginationLinks:[]
     },
     getters:{},
     actions:{
-        getAllVault({commit}, {type, url}){
-            console.log(type);
-            url = url || `/get-all-vault/${type}`
-            return axiosClient.get(url);
+        getItem({commit}, id){
+            return axiosClient.get(`/get-item/${id}`)
+                .then(({data})=>{
+                    commit('setVaultItem', data);
+                })
         },
-        CreateVault({commit}, vaultData){
-            return axiosClient.post('/create-vault', vaultData);
+        getAllVault({commit}, {type, url}){
+            url = url || `/get-all-vault/${type}`
+            return axiosClient.get(url)
+                .then(({data})=>{
+                    commit('setVaultItems', data);
+                });
+        },
+
+        // Create or Update Vault Item
+        manageVault({commit}, vaultData){
+            if(!vaultData.id){
+                return axiosClient.post('/create-vault', vaultData);
+            }else{
+                return axiosClient.put('/update-vault', vaultData);
+            }
         },
         getFolder({commit}){
             return axiosClient.get('/get-folder')
@@ -70,6 +85,13 @@ const store = createStore({
           },
     },
     mutations:{
+        setVaultItem:(state, vaultItem) => {
+            state.vaultItem = vaultItem.data;
+        },
+        setVaultItems:(state, allVaultData)=>{
+            state.vaultItems = allVaultData.data;
+            state.paginationLinks = allVaultData.meta.links;
+        },
         setFolderName:(state, data) => {
             state.folders = data ;
         },

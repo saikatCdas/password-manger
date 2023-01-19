@@ -1,5 +1,5 @@
 <template>
-    <div v-if="props.formModalOpen" class="fixed inset-0 z-50 overflow-y-auto" >
+    <div class="fixed inset-0 z-50 overflow-y-auto" >
         <div class="flex items-end justify-center min-h-screen px-4 text-center md:items-center sm:block sm:p-0">
             <div
                 x-transition:enter="transition ease-out duration-300 transform"
@@ -11,16 +11,16 @@
                 class="inline-block w-full max-w-xl p-8 my-20 overflow-hidden text-left transition-all transform bg-white rounded-lg shadow-xl 2xl:max-w-2xl"
             >
                 <div class="flex items-center justify-between space-x-4">
-                    <h1 class="text-xl font-medium text-gray-800 ">Add item</h1>
+                    <h1 class="text-xl font-medium text-gray-800 ">{{ route.query.id ? 'Edit Item': 'Add item' }}</h1>
 
-                    <button @click="formModalClose" class="text-gray-600 focus:outline-none hover:text-gray-700">
+                    <router-link to="/vaults" class="text-gray-600 focus:outline-none hover:text-gray-700">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                    </button>
+                    </router-link>
                 </div>
 
-                <form class="mt-5" @submit="CreateVault">
+                <form class="mt-5" @submit="manageVault">
                     <div class="mb-4">
                         <label for="category" class="block text-md font-semibold text-gray-900 capitalize">What type of item is this?</label>
                         <select v-model="vaultData.category" id="category" name="category" class="block w-full px-3 py-2 mt-2 text-gray-600 placeholder-gray-400 bg-white border border-gray-300 rounded-md focus:border-indigo-400 focus:outline-none focus:ring focus:ring-indigo-300 focus:ring-opacity-40">
@@ -40,7 +40,7 @@
 
                     <div class="mb-4">
                         <label for="name" class="block text-md font-semibold text-gray-900 capitalize">Name</label>
-                        <input v-model="vaultData.name" type="text" id="name" name="name" class="block w-full px-3 py-2 mt-2 text-gray-00 placeholder-gray-400 bg-white border border-gray-300 rounded-md focus:border-indigo-400 focus:outline-none focus:ring focus:ring-indigo-300 focus:ring-opacity-40" required/>
+                        <input v-model="vaultData.name" type="text" id="name" name="name" class="block w-full px-3 py-2 mt-2 text-gray-600 placeholder-gray-400 bg-white border border-gray-300 rounded-md focus:border-indigo-400 focus:outline-none focus:ring focus:ring-indigo-300 focus:ring-opacity-40" required/>
                     </div>
 
                     <div class="mb-4">
@@ -65,8 +65,8 @@
                     </div>
 
                     <div class="flex justify-end mt-6">
-                        <button type="submit" class="px-3 py-2 text-sm tracking-wide text-white capitalize transition-colors duration-200 transform bg-indigo-500 rounded-md dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:bg-indigo-700 hover:bg-indigo-600 focus:outline-none focus:bg-indigo-500 focus:ring focus:ring-indigo-300 focus:ring-opacity-50">
-                            Add item
+                        <button type="submit" class="px-3 py-2 text-sm tracking-wide text-white capitalize transition-colors duration-200 transform bg-indigo-500 rounded-md  hover:bg-indigo-700 ">
+                            {{ route.query.id ? 'Update Item': 'Add Item' }}
                         </button>
                     </div>
                 </form>
@@ -77,15 +77,15 @@
 
 <script setup>
 import { ref } from "@vue/reactivity";
-import { computed } from "@vue/runtime-core";
-import { useRouter } from "vue-router";
+import { computed, onMounted } from "@vue/runtime-core";
+import { useRouter, useRoute } from "vue-router";
 import store from "../../store";
 
 
+const route = useRoute();
 const router = useRouter();
-const props = defineProps(['formModalOpen']);
-const emit = defineEmits(['formModalClose']);
-const folders = computed(()=>store.state.folders)
+const folders = computed(()=>store.state.folders);
+
 const vaultData = ref({
     'name': '',
     'category' : 'Login',
@@ -97,13 +97,34 @@ const vaultData = ref({
     'notes': ''
 });
 
-function formModalClose (){
-    emit('formModalClose');
+
+// Notification for failed
+function failedNotification(){
+    store.commit("notify", {
+        type: "failed",
+        message: "Something went wrong.",
+    });
 }
 
-function CreateVault(ev){
+// initializing vault data for edit
+onMounted(()=>{
+    if(route.query.id){
+        store.dispatch('getItem', route.query.id)
+            .then(()=>{
+                vaultData.value = store.state.vaultItem;
+            }).catch((err)=>{
+                router.push({
+                    name: 'Vaults'
+                })
+                failedNotification();
+            })
+    }
+    store.dispatch('getFolder');
+})
+// create or update vault item
+function manageVault(ev){
     ev.preventDefault();
-    store.dispatch('CreateVault', vaultData.value)
+    store.dispatch('manageVault', vaultData.value)
         .then(()=>{
             router.push({
                 name: 'Vaults',
@@ -111,15 +132,10 @@ function CreateVault(ev){
             })
             store.commit("notify", {
                 type: "success",
-                message: "Item Added Successfully.",
+                message: `Item ${route.query.id ? 'Updated' : 'Added'} Successfully`
             });
-            vaultData.value = {'category' : 'Login', 'folder': ''}
-            formModalClose();
         }).catch((err)=>{
-            store.commit("notify", {
-                type: "failed",
-                message: "Something went wrong.",
-            });
+            failedNotification();
         })
 }
 </script>

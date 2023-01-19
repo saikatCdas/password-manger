@@ -5,6 +5,7 @@ import Login from '../components/authLayout/Login.vue';
 import NotFound from '../components/NotFound.vue';
 import DefaultLayout from '../components/DefaultLayout.vue';
 import Vaults from '../views/Vaults.vue';
+import VaultItemView from '../components/vault/VaultModal.vue';
 import Tools from '../views/Tools.vue';
 import PasswordGenerator from '../components/Tools/PasswordGenerator.vue';
 import Imports from '../components/Tools/Imports.vue';
@@ -26,7 +27,9 @@ const routes = [
                 {path: '/tools/imports', name:'Imports', component:Imports},
                 {path: '/tools/exports', name:'Exports', component:Exports},
             ]
-            }
+            },
+            {path: 'vault/item/add', name:'VaultItemAdd', component: VaultItemView},
+            {path: 'vault/item/edit:', name:'VaultItemEdit', component: VaultItemView},
         ],
       },
     {

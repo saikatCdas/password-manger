@@ -1,5 +1,5 @@
 <template>
-    <div v-if="props.modalOpen" class="fixed inset-0 z-50 overflow-y-auto" >
+    <div v-if="props.modalOpen" :class="[ !props.modalOpen ? '-top-full': '' ,'fixed transition-[1000ms] inset-0 z-50 overflow-y-auto']" >
         <div class="flex items-end justify-center min-h-screen px-4 text-center md:items-center sm:block sm:p-0">
             <div
                 x-transition:enter="transition ease-out duration-300 transform"
@@ -44,13 +44,12 @@ import store from "../../store";
 
 
 const props = defineProps(['modalOpen']);
-const emit = defineEmits(['modalClose']);
+const emit = defineEmits(['modalClose', 'getFolder']);
 const router = useRouter();
 
 const folderName = ref('');
 
 function modalClose(){
-    folderName.value = '';
     emit('modalClose', false);
 }
 
@@ -62,11 +61,11 @@ function CreateFolder(ev){
                 type: "success",
                 message: "Folder Created Successfully.",
             });
-            router.push({
-                name: 'Vaults',
-                query:{ type : 'all'}
-            });
-            modalClose();
+        router.push({
+            name: 'Vaults',
+            query:{ type : 'all'}
+        });
+        // modalClose();
         }).catch(()=>{
             store.commit("notify", {
                 type: "failed",

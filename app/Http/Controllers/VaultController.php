@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\VaultStoreRequest;
+use App\Http\Resources\VaultResource;
 use App\Models\Folder;
 use App\Models\User;
 use App\Models\Vault;
@@ -19,11 +20,33 @@ class VaultController extends Controller
      * @param [type] $type
      * @return void
      */
-    public function getVaultItems( $type){
-        if($type === 'all'){
-            return response(auth()->user()->vaults()->paginate(20));
+    public function getVaultItems( string $type){
+        try{
+            if($type === 'all'){
+                $vaultItems = auth()->user()->vaults()->paginate(20);
+            } else{
+                $vaultItems = auth()->user()->vaults()->where('name', ucfirst($type))->paginate(20);
+            }
+            return VaultResource::collection($vaultItems);
+        } catch(Throwable $e){
+            return $e;
         }
-        return 'success';
+    }
+
+    /**
+     * get item from vault by id
+     *
+     * @param [type] $id
+     * @return void
+     */
+    public function getItem($id){
+        $item = Vault::whereId($id)->first();
+
+        if($item->user_id === auth()->id()){
+            return new VaultResource($item);
+        }
+
+        return 'Unauthorized Action';
     }
 
     /**
@@ -36,20 +59,38 @@ class VaultController extends Controller
         try{
 
             // Validate form data
-            $vaultData = $request->validated();
+            $vaultIntiData = $request->validated();
 
-            if($request->folder){
-                // get the Folder id
-                $folder = Folder::where('name', $request->folder)->first();
-                $folderId = $folder->id;
-                $vaultData['folder_id'] = $folderId;
-            }
-            $vaultData['user_id'] = auth()->id();
+            // if request has folder
+            $vaultIntiData['folder_id'] = $this->getFolderId($request);
+
+            $vaultIntiData['user_id'] = auth()->id();
 
             // Create a vault
-            $vaultData = Vault::create($vaultData);
+            $vaultData = Vault::create($vaultIntiData);
 
             return $vaultData;
+
+        } catch( Throwable $e ) {
+            return $e;
+        }
+    }
+
+    public function update(VaultStoreRequest $request){
+        try{
+
+            // Validate form data
+            $vaultIntiData = $request->validated();
+
+            // if request has folder
+            $vaultIntiData['folder_id'] = $this->getFolderId($request);
+
+            $vaultIntiData['user_id'] = auth()->id();
+
+            // update vault
+            Vault::whereId($request->id)->update($vaultIntiData);
+
+            return 'success';
 
         } catch( Throwable $e ) {
             return $e;
@@ -91,6 +132,19 @@ class VaultController extends Controller
         }
         // do something with the csv data
         return $csv;
+    }
+
+    private function getFolderId($request){
+        // if request has folder
+        if($request->folder){
+
+            // get the Folder id
+            $folder = Folder::where('name', $request->folder)->first();
+            return $folder->id;
+
+        }else{
+            return null;
+        }
     }
 
 

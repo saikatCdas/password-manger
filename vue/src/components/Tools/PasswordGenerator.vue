@@ -20,6 +20,8 @@
                         class="border border-gray-300 rounded-sm p-2 w-full"
                         type="number"
                         id="Length"
+                        max="80"
+                        min="6"
                         required
                         />
                     </div>
@@ -33,6 +35,8 @@
                         class="border border-gray-300 rounded-sm p-2 w-full"
                         type="number"
                         id="number"
+                        max="80"
+                        min="0"
                         required
                         :disabled="!numbers"
                         />
@@ -47,6 +51,8 @@
                         class="border border-gray-300 rounded-sm p-2 w-full"
                         type="number"
                         id="spCharacter"
+                        max="80"
+                        min="0"
                         required
                         :disabled="!specialCharacter"
                         />
@@ -109,7 +115,8 @@
                         </label>
                     </div>
                 </div>
-                <div >
+                <div class="flex max-sm:flex-col max-sm:space-y-1 sm:space-x-2">
+                    <button @click="onChange" type=" button" class="py-1 px-3 text-lg rounded-md border bg-emerald-500 hover:bg-emerald-600 text-white">Regenerate Password</button>
                     <button type="button" @click="copyText" class="text-gray-600 text-lg border border-gray-400 px-3 py-1 rounded-md ">Copy password</button>
                 </div>
             </form>
@@ -208,7 +215,8 @@ onMounted(()=>{
     password.value = generatePassword(length.value, minNum.value, minSpecChar.value, capitalLetters.value, smallLetters.value)
 })
 
-function onChange () {
+function onChange (ev) {
+    ev.preventDefault();
     // return if length is smaller than
     if((length.value -(minNum.value + minSpecChar.value))< 0){
         minNum.value = 0;
