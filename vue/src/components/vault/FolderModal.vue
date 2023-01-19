@@ -58,13 +58,14 @@ function CreateFolder(ev){
     store.dispatch('createFolder', folderName.value)
         .then(()=>{
             store.commit("notify", {
-            type: "success",
-            message: "Folder Created Successfully.",
-        });
+                type: "success",
+                message: "Folder Created Successfully.",
+            });
         router.push({
-            name: 'Vaults'
+            name: 'Vaults',
+            query:{ type : 'all'}
         });
-        modalClose();
+        // modalClose();
         }).catch(()=>{
             store.commit("notify", {
                 type: "failed",

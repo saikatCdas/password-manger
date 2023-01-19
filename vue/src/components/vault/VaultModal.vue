@@ -20,35 +20,32 @@
                     </button>
                 </div>
 
-                <form class="mt-5" @submit="CreateFolder">
+                <form class="mt-5" @submit="CreateVault">
                     <div class="mb-4">
                         <label for="category" class="block text-md font-semibold text-gray-900 capitalize">What type of item is this?</label>
                         <select v-model="vaultData.category" id="category" name="category" class="block w-full px-3 py-2 mt-2 text-gray-600 placeholder-gray-400 bg-white border border-gray-300 rounded-md focus:border-indigo-400 focus:outline-none focus:ring focus:ring-indigo-300 focus:ring-opacity-40">
-                            <option >Login</option>
-                            <option>Card</option>
-                            <option>Secure note</option>
-                            <option value="">Chose a category</option>
+                            <option value="Login" >Login</option>
+                            <option value="Card" >Card</option>
+                            <option value="Secure note" >Secure note</option>
                         </select>
                     </div>
 
                     <div class="mb-4">
                         <label for="folder" class="block text-md font-semibold text-gray-900 capitalize">Folder</label>
                         <select v-model="vaultData.folder" id="folder" name="folder" class="block w-full px-3 py-2 mt-2 text-gray-600 placeholder-gray-400 bg-white border border-gray-300 rounded-md focus:border-indigo-400 focus:outline-none focus:ring focus:ring-indigo-300 focus:ring-opacity-40">
-                            <option >Login</option>
-                            <option>Card</option>
-                            <option>Secure note</option>
+                            <option v-for="(folder, ind) in folders" :key="ind" :value="folder.name">{{ folder.name }}</option>
                             <option value="">Chose a folder</option>
                         </select>
                     </div>
 
                     <div class="mb-4">
                         <label for="name" class="block text-md font-semibold text-gray-900 capitalize">Name</label>
-                        <input v-model="vaultData.name" type="text" id="name" name="name" class="block w-full px-3 py-2 mt-2 text-gray-00 placeholder-gray-400 bg-white border border-gray-300 rounded-md focus:border-indigo-400 focus:outline-none focus:ring focus:ring-indigo-300 focus:ring-opacity-40"/>
+                        <input v-model="vaultData.name" type="text" id="name" name="name" class="block w-full px-3 py-2 mt-2 text-gray-00 placeholder-gray-400 bg-white border border-gray-300 rounded-md focus:border-indigo-400 focus:outline-none focus:ring focus:ring-indigo-300 focus:ring-opacity-40" required/>
                     </div>
 
                     <div class="mb-4">
                         <label for="user_name" class="block text-md font-semibold text-gray-900 capitalize">User Name</label>
-                        <input v-model="vaultData.user_name" type="text" id="user_name" name="user_name" class="block w-full px-3 py-2 mt-2 text-gray-600 placeholder-gray-400 bg-white border border-gray-300 rounded-md focus:border-indigo-400 focus:outline-none focus:ring focus:ring-indigo-300 focus:ring-opacity-40"/>
+                        <input v-model="vaultData.user_name" type="text" id="user_name" name="user_name" class="block w-full px-3 py-2 mt-2 text-gray-600 placeholder-gray-400 bg-white border border-gray-300 rounded-md focus:border-indigo-400 focus:outline-none focus:ring focus:ring-indigo-300 focus:ring-opacity-40" />
                     </div>
                     <div class="mb-4">
                         <label for="email" class="block text-md font-semibold text-gray-900 capitalize">Email</label>
@@ -80,17 +77,21 @@
 
 <script setup>
 import { ref } from "@vue/reactivity";
+import { computed } from "@vue/runtime-core";
+import { useRouter } from "vue-router";
+import store from "../../store";
 
 
+const router = useRouter();
 const props = defineProps(['formModalOpen']);
 const emit = defineEmits(['formModalClose']);
-
+const folders = computed(()=>store.state.folders)
 const vaultData = ref({
-    'folder': '',
-    'category' : '',
     'name': '',
-    'user_name': '',
+    'category' : 'Login',
     'email': '',
+    'folder': '',
+    'user_name': '',
     'password': '',
     'url': '',
     'notes': ''
@@ -100,6 +101,27 @@ function formModalClose (){
     emit('formModalClose');
 }
 
+function CreateVault(ev){
+    ev.preventDefault();
+    store.dispatch('CreateVault', vaultData.value)
+        .then(()=>{
+            router.push({
+                name: 'Vaults',
+                query: { type : 'all'}
+            })
+            store.commit("notify", {
+                type: "success",
+                message: "Item Added Successfully.",
+            });
+            vaultData.value = {'category' : 'Login', 'folder': ''}
+            formModalClose();
+        }).catch((err)=>{
+            store.commit("notify", {
+                type: "failed",
+                message: "Something went wrong.",
+            });
+        })
+}
 </script>
 
 <style>

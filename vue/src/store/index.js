@@ -14,9 +14,17 @@ const store = createStore({
           },
           exportUrl:{},
           folders: [],
+          vaultItems:{},
+          paginationLinks:[]
     },
     getters:{},
     actions:{
+        getAllVault({commit}){
+            return axiosClient.get('/get-all-vault')
+        },
+        CreateVault({commit}, vaultData){
+            return axiosClient.post('/create-vault', vaultData);
+        },
         getFolder({commit}){
             return axiosClient.get('/get-folder')
                 .then(({data})=>{

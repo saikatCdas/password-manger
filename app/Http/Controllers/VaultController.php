@@ -2,12 +2,45 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\VaultStoreRequest;
+use App\Models\Folder;
 use App\Models\User;
+use App\Models\Vault;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class VaultController extends Controller
 {
+    public function store( VaultStoreRequest $request ){
+        try{
+
+            // Validate form data
+            $vaultData = $request->validated();
+
+            if($request->folder){
+                // get the Folder id
+                $folder = Folder::where('name', $request->folder)->first();
+                $folderId = $folder->id;
+                $vaultData['folder_id'] = $folderId;
+            }
+            $vaultData['user_id'] = auth()->id();
+
+            // Create a vault
+            $vaultData = Vault::create($vaultData);
+
+            return $vaultData;
+
+        } catch( Throwable $e ) {
+            return $e;
+        }
+    }
+
+    /**
+     * Export csv file from Database
+     *
+     * @return void
+     */
     public function export()
     {
         $data = DB::table('users')->get();
@@ -15,6 +48,12 @@ class VaultController extends Controller
         $csvExporter->build($data, ['name', 'email'])->download();
     }
 
+    /**
+     * import csv file
+     *
+     * @param Request $request
+     * @return void
+     */
     public function import(Request $request)
     {
         $file = $request->file('csv_file');

@@ -26,6 +26,7 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/create-folder', [FolderController::class, 'create']);
     Route::get('/get-folder', [FolderController::class, 'allFolder']);
+    Route::post('/create-vault', [VaultController::class, 'store']);
 });
 
 
