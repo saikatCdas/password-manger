@@ -42,8 +42,14 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    // build relationship with folder
     public function folders(){
         return $this->hasMany(Folder::class);
+    }
+
+    // build relationship with folder
+    public function vaults(){
+        return $this->hasMany(Vault::class);
     }
 
 }

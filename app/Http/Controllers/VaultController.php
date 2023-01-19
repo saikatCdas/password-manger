@@ -7,11 +7,31 @@ use App\Models\Folder;
 use App\Models\User;
 use App\Models\Vault;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
 class VaultController extends Controller
 {
+    /**
+     * get items from vault
+     *
+     * @param [type] $type
+     * @return void
+     */
+    public function getVaultItems( $type){
+        if($type === 'all'){
+            return response(auth()->user()->vaults()->paginate(20));
+        }
+        return 'success';
+    }
+
+    /**
+     * Create items in vault
+     *
+     * @param VaultStoreRequest $request
+     * @return void
+     */
     public function store( VaultStoreRequest $request ){
         try{
 

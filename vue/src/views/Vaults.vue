@@ -147,7 +147,7 @@ function allVault (){
         name: 'Vaults',
         query:{ type: 'all' }
     });
-    store.dispatch('getAllVault')
+    store.dispatch('getAllVault', {type: route.query.type})
         .then(()=>{
             loading.value = false;
             vaultItems.value = store.state.vaultItems;

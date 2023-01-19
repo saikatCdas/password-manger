@@ -19,8 +19,10 @@ const store = createStore({
     },
     getters:{},
     actions:{
-        getAllVault({commit}){
-            return axiosClient.get('/get-all-vault')
+        getAllVault({commit}, {type, url}){
+            console.log(type);
+            url = url || `/get-all-vault/${type}`
+            return axiosClient.get(url);
         },
         CreateVault({commit}, vaultData){
             return axiosClient.post('/create-vault', vaultData);
