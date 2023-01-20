@@ -1,6 +1,6 @@
 <template>
-    <div v-if="props.modalOpen" :class="[ !props.modalOpen ? '-top-full': '' ,'fixed transition-[1000ms] inset-0 z-50 overflow-y-auto']" >
-        <div class="flex items-end justify-center min-h-screen px-4 text-center md:items-center sm:block sm:p-0">
+    <div v-if="props.modalOpen" class="fixed max-sm:top-6 inset-0 z-50 overflow-y-auto" >
+        <div class="flex items-end justify-center sm:min-h-screen px-4 text-center md:items-center sm:block sm:p-0">
             <div
                 x-transition:enter="transition ease-out duration-300 transform"
                 x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
@@ -23,7 +23,10 @@
                 <form class="mt-5" @submit="changeFolder">
                     <div>
                         <label for="folder-name" class="block text-sm text-gray-700 capitalize">Folder Name</label>
-                        <input v-model="folderName" placeholder="Write a folder name" type="text" class="block w-full px-3 py-2 mt-2 text-gray-600 placeholder-gray-400 bg-white border border-gray-200 rounded-md focus:border-indigo-400 focus:outline-none focus:ring focus:ring-indigo-300 focus:ring-opacity-40">
+                        <select v-model="folderId" class="block w-full px-3 py-2 mt-2 text-gray-600 placeholder-gray-400 bg-white border border-gray-200 rounded-md focus:border-indigo-400 focus:outline-none focus:ring focus:ring-indigo-300 focus:ring-opacity-40">
+                            <option v-for="(folder, ind) in folders" :key="ind" :value="folder.id">{{ folder.name }}</option>
+                            <option value="">No Folder</option>
+                        </select>
                     </div>
 
                     <div class="flex justify-end mt-6">
@@ -39,41 +42,29 @@
 
 <script setup>
 import { ref } from "@vue/reactivity";
+import { computed } from "@vue/runtime-core";
 import { useRouter } from "vue-router";
 import store from "../../store";
 
 
-const props = defineProps(['modalOpen',]);
-const emit = defineEmits(['modalClose', 'getFolder']);
+const props = defineProps({
+    modalOpen: Boolean,
+});
+const emit = defineEmits(['modalClose', 'changeFolder']);
 const router = useRouter();
 
-const folderName = ref('');
+const folderId = ref("");
+const folders = computed(()=>store.state.folders)
 
 function modalClose(){
-    folderName.value = '';
+    folderId.value = '';
     emit('modalClose', false);
 }
 
 
 function changeFolder(ev){
     ev.preventDefault();
-    store.dispatch('createFolder', folderName.value)
-        .then(()=>{
-            store.commit("notify", {
-                type: "success",
-                message: "Folder Created Successfully.",
-            });
-        router.push({
-            name: 'Vaults',
-            query:{ type : 'all'}
-        });
-        // modalClose();
-        }).catch(()=>{
-            store.commit("notify", {
-                type: "failed",
-                message: "Something went wrong !! Folder can't be create !!",
-            });
-        })
+    emit('changeFolder', folderId.value)
 }
 </script>
 

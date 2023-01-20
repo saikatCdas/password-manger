@@ -20,6 +20,9 @@ const store = createStore({
     },
     getters:{},
     actions:{
+        moveFolder({commit}, data){
+            return axiosClient.put('/move-folder', data);
+        },
         deleteSelectedVaultItem({commit}, itemId){
             return axiosClient.delete(`/delete-selected-vault-item/${itemId}`);
         },

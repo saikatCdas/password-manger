@@ -1,6 +1,6 @@
 <template>
-    <div v-if="props.modalOpen" class="fixed inset-0 z-50 overflow-y-auto" >
-        <div class="flex items-end justify-center min-h-screen px-4 text-center md:items-center sm:block sm:p-0">
+    <div v-if="props.modalOpen" class="fixed max-sm:top-6 inset-0 z-50 overflow-y-auto" >
+        <div class="flex items-end justify-center sm:min-h-screen px-4 text-center md:items-center sm:block sm:p-0">
             <div
                 x-transition:enter="transition ease-out duration-300 transform"
                 x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"

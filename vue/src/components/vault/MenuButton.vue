@@ -33,16 +33,11 @@
                 <span>Unselect</span>
             </button>
         </div>
-        <ChangeFolderModal
-            :modalOpen="modalOpen"
-            @modalClose="modalClose"
-        />
     </div>
   </template>
 
 <script setup>
 import { ref } from "@vue/reactivity";
-import ChangeFolderModal from "./ChangeFolderModal.vue";
 
 const emit = defineEmits(['selectAll', 'unSelectAll', 'deleteSelected', 'moveFolder' ]);
 const showMenu = ref(false) ;

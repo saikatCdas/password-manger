@@ -25,6 +25,11 @@
                 :paginationLinks="paginationLinks"
                 @getForPage="getForPage"
             />
+            <ChangeFolderModal
+                :modalOpen="modalOpen"
+                @modalClose="modalClose"
+                @changeFolder="changeFolder"
+            />
         </div>
     </div>
 </template>
@@ -33,6 +38,7 @@
 import { ref } from '@vue/reactivity';
 import store from '../../store';
 import Pagination from '../Pagination.vue';
+import ChangeFolderModal from './ChangeFolderModal.vue';
 
 const props = defineProps({
     vaultItems: Object,
@@ -40,8 +46,14 @@ const props = defineProps({
     loading: Boolean,
 })
 const emit = defineEmits(['getForPage', 'removeItemFromList']);
-
 const selectedVaultItem = ref([]);
+const modalOpen = ref(false);
+
+function modalClose(){
+    selectedVaultItem.value = [];
+    modalOpen.value = false
+}
+
 
 function getForPage(event, link){
     emit('getForPage', event, link)
@@ -78,24 +90,34 @@ function deleteSelected(){
     }
 }
 
-// Moving selected items folder
+// Receiving a folder name  for selected items
 function moveFolder(){
     if(selectedVaultItem.value.length > 0){
-        store.dispatch('deleteSelectedVaultItem', selectedVaultItem.value)
+        modalOpen.value = true;
+    } else{
+        itemWasNotSelected();
+    }
+}
+
+
+// Changing the folder name
+function changeFolder(id){
+    if(selectedVaultItem.value.length > 0){
+        store.dispatch('moveFolder', {folderId: id, itemsId: selectedVaultItem.value})
         .then(()=>{
             emit('removeItemFromList', selectedVaultItem.value)
             store.commit("notify", {
                 type: "success",
                 message: "Item Moved successfully !!",
             });
+            modalClose();
+            selectedVaultItem.value = [];
         }).catch(()=>{
             onError();
+            modalClose();
         })
     } else{
-        store.commit("notify", {
-            type: "failed",
-            message: "Select item or more !!"
-        })
+        itemWasNotSelected();
     }
 }
 
@@ -116,6 +138,14 @@ function onError(){
         type: "failed",
         message: "Something Went Wrong !!",
     });
+}
+
+// If item was not selected;
+function itemWasNotSelected(){
+    store.commit("notify", {
+        type: "failed",
+        message: "Select item or more !!"
+    })
 }
 
 

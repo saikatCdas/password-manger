@@ -7,7 +7,7 @@ import DefaultLayout from '../components/DefaultLayout.vue';
 import Vaults from '../views/Vaults.vue';
 import VaultItemView from '../components/vault/VaultModal.vue';
 import Tools from '../views/Tools.vue';
-import PasswordGenerator from '../components/Tools/PasswordGenerator.vue';
+import PasswordGenerator from '../components/Tools/Generator.vue';
 import Imports from '../components/Tools/Imports.vue';
 import Exports from '../components/Tools/Exports.vue';
 import store from '../store';
