@@ -142,6 +142,35 @@ class VaultController extends Controller
         }
     }
 
+
+    /**
+     * move Folder for Selected Items
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function moveFolder(Request $request){
+        try{
+
+            // Checking Folder Exist
+            if($request->folderId !== null){
+                $request->validate([
+                    'folderId' => 'exists:folders,id'
+                ]);
+            }
+
+            // Changing Folder
+            $itemIds = $request->itemsId;
+            foreach($itemIds as $id){
+                $item = Vault::whereId($id)->first();
+                $item['folder_id'] = $request['folderId'];
+                $item->save();
+            }
+
+        }catch(Throwable $e){
+            return $e;
+        }
+    }
     /**
      * Export csv file from Database
      *

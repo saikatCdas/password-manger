@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::get('/get-all-vault/{type}', [VaultController::class, 'getVaultItems']);
     Route::get('/get-item/{id}', [VaultController::class, 'getItem']);
     Route::delete('/delete-selected-vault-item/{itemId}', [VaultController::class, 'destroy']);
+    Route::put('/move-folder', [VaultController::class, 'moveFolder']);
 });
 
 
