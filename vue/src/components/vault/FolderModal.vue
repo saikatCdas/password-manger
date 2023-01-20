@@ -20,7 +20,7 @@
                     </button>
                 </div>
 
-                <form class="mt-5" @submit="CreateFolder">
+                <form class="mt-5" @submit="createFolder">
                     <div>
                         <label for="folder-name" class="block text-sm text-gray-700 capitalize">Folder Name</label>
                         <input v-model="folderName" placeholder="Write a folder name" type="text" class="block w-full px-3 py-2 mt-2 text-gray-600 placeholder-gray-400 bg-white border border-gray-200 rounded-md focus:border-indigo-400 focus:outline-none focus:ring focus:ring-indigo-300 focus:ring-opacity-40">
@@ -54,7 +54,7 @@ function modalClose(){
     emit('modalClose', false);
 }
 
-function CreateFolder(ev){
+function createFolder(ev){
     ev.preventDefault();
     store.dispatch('createFolder', folderName.value)
         .then(()=>{

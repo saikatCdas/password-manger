@@ -175,7 +175,6 @@ function generatePassword(length, minNumericChars, minSpecialChars, capitalLette
         possiblePassword += lowerChars;
     }
 
-    console.log(possiblePassword);
     // add the Lower and||or uppercase characters to the password
     for (var i = 0; i < lengthForLetters; i++) {
         password += possiblePassword.charAt(Math.floor(Math.random() * possiblePassword.length));

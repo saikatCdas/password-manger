@@ -1,5 +1,5 @@
 <template>
-    <div class="flex justify-center mt-5 pb-3">
+    <div v-if="paginationLinks.length > 3" class="flex justify-center mt-5 pb-3">
       <nav
       class="relative z-0 inline-flex justify-center rounded-md shadow-sm -space-x-px"
       aria-label="Pagination"
@@ -37,6 +37,7 @@
   function getForPage(event, link){
     emit('getForPage', event, link)
   }
+
   </script>
 
   <style>

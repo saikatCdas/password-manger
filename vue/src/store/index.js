@@ -20,6 +20,9 @@ const store = createStore({
     },
     getters:{},
     actions:{
+        deleteSelectedVaultItem({commit}, itemId){
+            return axiosClient.delete(`/delete-selected-vault-item/${itemId}`);
+        },
         getItem({commit}, id){
             return axiosClient.get(`/get-item/${id}`)
                 .then(({data})=>{
@@ -27,7 +30,14 @@ const store = createStore({
                 })
         },
         getAllVault({commit}, {type, url}){
-            url = url || `/get-all-vault/${type}`
+
+            //converting type into a string
+            let queryString;
+            if(!url){
+                queryString = Object.keys(type).map(key => key + '=' + type[key]).join('&');
+            }
+            //checking if request has url
+            url = url || `/get-all-vault/${queryString}`
             return axiosClient.get(url)
                 .then(({data})=>{
                     commit('setVaultItems', data);

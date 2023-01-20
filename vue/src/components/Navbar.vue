@@ -27,7 +27,7 @@ const route = useRoute();
 const router = useRouter();
 const navigation = [
 {name: 'Vaults', to:{name: 'Vaults'}},
-{name: 'Tools', to:{name: 'Tools'}}
+{name: 'Tools', to:{name: 'PasswordGenerator'}}
 ]
 
 const logout = (ev) => {

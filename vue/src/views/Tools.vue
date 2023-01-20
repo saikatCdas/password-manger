@@ -1,6 +1,6 @@
 <template>
     <PageComponent>
-        <div class="flex max-sm:flex-col max-sm:space-y-6 sm:space-x-6 mt-4">
+        <div class="flex max-sm:flex-col max-sm:space-y-6 sm:space-x-6 mt-4 min-h-screen h-full">
             <div class="">
                 <div class="bg-white rounded-lg sm:rounded-md border  border-gray-400 w-full sm:w-52">
                     <div class=" bg-gray-100  rounded-md py-2 px-4">
