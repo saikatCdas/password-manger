@@ -20,13 +20,25 @@ class VaultController extends Controller
      * @param [type] $type
      * @return void
      */
-    public function getVaultItems( string $type){
+    public function getVaultItems( $type){
         try{
-            if($type === 'all'){
-                $vaultItems = auth()->user()->vaults()->paginate(20);
-            } else{
-                $vaultItems = auth()->user()->vaults()->where('name', ucfirst($type))->paginate(20);
+            // exploding the string
+            $parts = explode("=", $type);
+            //checking is the request for category or folder
+            if($parts[0] === "category"){
+                if($parts[1] === 'all'){
+                    $vaultItems = auth()->user()->vaults()->paginate(20);
+                } else{
+                    $vaultItems = auth()->user()->vaults()->where('category', ucfirst($parts[1]))->paginate(20);
+                }
+            }else{
+                if($parts[1] === "null"){
+                    $vaultItems = auth()->user()->vaults()->where('folder_id', null)->paginate(20);
+                }else{
+                    $vaultItems = auth()->user()->vaults()->where('folder_id', $parts[1])->paginate(20);
+                }
             }
+
             return VaultResource::collection($vaultItems);
         } catch(Throwable $e){
             return $e;
@@ -76,6 +88,12 @@ class VaultController extends Controller
         }
     }
 
+    /**
+     * update Vault item
+     *
+     * @param VaultStoreRequest $request
+     * @return void
+     */
     public function update(VaultStoreRequest $request){
         try{
 
@@ -93,6 +111,33 @@ class VaultController extends Controller
             return 'success';
 
         } catch( Throwable $e ) {
+            return $e;
+        }
+    }
+
+    /**
+     * delete Item or Items
+     *
+     * @param [type] $itemId
+     * @return void
+     */
+    public function destroy($itemId)
+    {
+        try{
+            // exploding and converting into an array
+            $itemIds = explode(",", $itemId);
+
+            // looping for multiple value
+            foreach($itemIds as $id){
+                $vaultData = Vault::whereId($id)->first();
+
+                // Checking user has permission to delete
+                if(auth()->id() === $vaultData->user_id){
+                    $vaultData->delete();
+                }
+            }
+            return response(['success'], 200);
+        }catch(Throwable $e){
             return $e;
         }
     }
