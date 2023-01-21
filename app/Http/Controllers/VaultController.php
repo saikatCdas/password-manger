@@ -178,9 +178,9 @@ class VaultController extends Controller
      */
     public function export()
     {
-        $data = DB::table('users')->get();
+        $data = DB::table('vaults')->get();
         $csvExporter = new \Laracsv\Export();
-        $csvExporter->build($data, ['name', 'email'])->download();
+        $csvExporter->build($data, ['user_id', 'folder_id', 'category', 'email', 'name'])->download();
     }
 
     /**
@@ -198,7 +198,8 @@ class VaultController extends Controller
         $csv = array();
         foreach ($rows as $row) {
             // return $row[0];
-            User::create([
+            dd($row, 'jdhjhd');
+            Vault::create([
                 'name' => $row[0],
                 'email' => $row[1],
                 'password' => 'at@S1998'
