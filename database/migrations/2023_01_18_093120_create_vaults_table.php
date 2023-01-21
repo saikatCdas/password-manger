@@ -23,6 +23,10 @@ return new class extends Migration
             $table->string('user_name')->nullable();
             $table->string('password')->nullable();
             $table->string('url')->nullable();
+            $table->string('card_holder_name')->nullable();
+            $table->string('card_number')->nullable();
+            $table->string('card_expiration_date')->nullable();
+            $table->string('card_security_code')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
         });

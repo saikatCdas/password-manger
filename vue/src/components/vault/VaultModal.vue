@@ -43,22 +43,43 @@
                         <input v-model="vaultData.name" type="text" id="name" name="name" class="block w-full px-3 py-2 mt-2 text-gray-600 placeholder-gray-400 bg-white border border-gray-300 rounded-md focus:border-indigo-400 focus:outline-none focus:ring focus:ring-indigo-300 focus:ring-opacity-40" required/>
                     </div>
 
-                    <div class="mb-4">
+                    <!-- Login  -->
+                    <div v-if="vaultData.category === 'Login'" class="mb-4">
                         <label for="user_name" class="block text-md font-semibold text-gray-900 capitalize">User Name</label>
                         <input v-model="vaultData.user_name" type="text" id="user_name" name="user_name" class="block w-full px-3 py-2 mt-2 text-gray-600 placeholder-gray-400 bg-white border border-gray-300 rounded-md focus:border-indigo-400 focus:outline-none focus:ring focus:ring-indigo-300 focus:ring-opacity-40" />
                     </div>
-                    <div class="mb-4">
+                    <div v-if="vaultData.category === 'Login'" class="mb-4">
                         <label for="email" class="block text-md font-semibold text-gray-900 capitalize">Email</label>
                         <input v-model="vaultData.email" type="text" id="email" name="email" class="block w-full px-3 py-2 mt-2 text-gray-600 placeholder-gray-400 bg-white border border-gray-300 rounded-md focus:border-indigo-400 focus:outline-none focus:ring focus:ring-indigo-300 focus:ring-opacity-40"/>
                     </div>
-                    <div class="mb-4">
+                    <div v-if="vaultData.category === 'Login'" class="mb-4">
                         <label for="password" class="block text-md font-semibold text-gray-900 capitalize">Password</label>
                         <input v-model="vaultData.password" type="text" id="password" name="password" class="block w-full px-3 py-2 mt-2 text-gray-600 placeholder-gray-400 bg-white border border-gray-300 rounded-md focus:border-indigo-400 focus:outline-none focus:ring focus:ring-indigo-300 focus:ring-opacity-40"/>
                     </div>
-                    <div class="mb-4">
+                    <div v-if="vaultData.category === 'Login'" class="mb-4">
                         <label for="url" class="block text-md font-semibold text-gray-900 capitalize">URL</label>
                         <input v-model="vaultData.url" type="text" id="url" name="url" class="block w-full px-3 py-2 mt-2 text-gray-600 placeholder-gray-400 bg-white border border-gray-300 rounded-md focus:border-indigo-400 focus:outline-none focus:ring focus:ring-indigo-300 focus:ring-opacity-40" placeholder="ex. https://google.com"/>
                     </div>
+
+                    <!-- Card -->
+                    <div v-if="vaultData.category === 'Card'" class="mb-4">
+                        <label for="card_holder_name" class="block text-md font-semibold text-gray-900 capitalize">Card Holder Name</label>
+                        <input v-model="vaultData.card_holder_name" type="text" id="card_holder_name" name="card_holder_name" class="block w-full px-3 py-2 mt-2 text-gray-600 placeholder-gray-400 bg-white border border-gray-300 rounded-md focus:border-indigo-400 focus:outline-none focus:ring focus:ring-indigo-300 focus:ring-opacity-40"/>
+                    </div>
+                    <div v-if="vaultData.category === 'Card'" class="mb-4">
+                        <label for="card_number" class="block text-md font-semibold text-gray-900 capitalize">Card Number</label>
+                        <input v-model="vaultData.card_number" type="text" id="card_number" name="card_number" class="block w-full px-3 py-2 mt-2 text-gray-600 placeholder-gray-400 bg-white border border-gray-300 rounded-md focus:border-indigo-400 focus:outline-none focus:ring focus:ring-indigo-300 focus:ring-opacity-40"/>
+                    </div>
+                    <div v-if="vaultData.category === 'Card'" class="mb-4">
+                        <label for="card_expiration_date" class="block text-md font-semibold text-gray-900 capitalize">Expiration Date</label>
+                        <input v-model="vaultData.card_expiration_date" type="text" id="card_expiration_date" name="card_expiration_date" class="block w-full px-3 py-2 mt-2 text-gray-600 placeholder-gray-400 bg-white border border-gray-300 rounded-md focus:border-indigo-400 focus:outline-none focus:ring focus:ring-indigo-300 focus:ring-opacity-40"/>
+                    </div>
+                    <div v-if="vaultData.category === 'Card'" class="mb-4">
+                        <label for="card_security_code" class="block text-md font-semibold text-gray-900 capitalize">Security Code</label>
+                        <input v-model="vaultData.card_security_code" type="text" id="card_security_code" name="card_security_code" class="block w-full px-3 py-2 mt-2 text-gray-600 placeholder-gray-400 bg-white border border-gray-300 rounded-md focus:border-indigo-400 focus:outline-none focus:ring focus:ring-indigo-300 focus:ring-opacity-40"/>
+                    </div>
+
+
                     <div class="mb-4">
                         <label for="notes" class="block text-md font-semibold text-gray-900 capitalize">Notes</label>
                         <textarea v-model="vaultData.notes" rows="4" type="text" id="notes" name="notes" class="block w-full px-3 py-2 mt-2 text-gray-600 placeholder-gray-400 bg-white border border-gray-300 rounded-md focus:border-indigo-400 focus:outline-none focus:ring focus:ring-indigo-300 focus:ring-opacity-40"/>
@@ -94,6 +115,10 @@ const vaultData = ref({
     'user_name': '',
     'password': '',
     'url': '',
+    'card_holder_name': '',
+    'card_number': '',
+    'card_expiration_date': '',
+    'card_security_code':'',
     'notes': ''
 });
 

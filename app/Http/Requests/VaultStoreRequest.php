@@ -30,6 +30,10 @@ class VaultStoreRequest extends FormRequest
             'email'     => 'nullable|string',
             'password'  => 'nullable|string',
             'url'       => 'nullable|string',
+            'card_holder_name' => 'nullable|string',
+            'card_number' => 'nullable|string',
+            'card_expiration_date' => 'nullable|string',
+            'card_security_code' => 'nullable|string',
             'notes'     => 'nullable|string'
         ];
     }

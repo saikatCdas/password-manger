@@ -24,6 +24,7 @@ const router = useRouter();
 
 const showUploadButton = ref(false);
 function submitFile (){
+    showUploadButton.value = false;
 // Get the file from the input
     const file = fileInput.value.files[0];
 

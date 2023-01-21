@@ -73,6 +73,7 @@ const store = createStore({
         createFolder({commit}, folderName){
             return axiosClient.post('/create-folder', {name:folderName})
                 .then(({data})=>{
+                    // console.log(data);
                     commit('setFolderName', data);
                 })
         },

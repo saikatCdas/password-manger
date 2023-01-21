@@ -32,6 +32,6 @@ class FolderController extends Controller
         $folderName['user_id'] = auth()->id();
         Folder::create($folderName);
 
-        return response('Success', 200);
+        return response(Folder::where('user_id', auth()->id())->get(), 200);
     }
 }

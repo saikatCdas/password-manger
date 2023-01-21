@@ -25,6 +25,10 @@ class VaultResource extends JsonResource
             'user_name' => $this->user_name,
             'password' => $this->password,
             'url' => $this->url,
+            'card_holder_name'=> $this->card_holder_name,
+            'card_number'=> $this->card_number,
+            'card_expiration_date'=> $this->card_expiration_date,
+            'card_security_code'=> $this->card_security_code,
             'notes' => $this->notes
         ];
     }

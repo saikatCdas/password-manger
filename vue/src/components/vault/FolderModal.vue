@@ -51,7 +51,7 @@ const folderName = ref('');
 
 function modalClose(){
     folderName.value = '';
-    emit('modalClose', false);
+    emit('modalClose');
 }
 
 function createFolder(ev){
@@ -61,10 +61,6 @@ function createFolder(ev){
             store.commit("notify", {
                 type: "success",
                 message: "Folder Created Successfully.",
-            });
-            router.push({
-                name: 'Vaults',
-                query:{ type : 'all'}
             });
             modalClose();
         }).catch(()=>{
