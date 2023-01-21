@@ -8,6 +8,7 @@
                     </div>
                     <hr>
                     <div class="px-4 py-2">
+                        <Search @search="search"/>
                         <div class="py-1 px-4 flex items-center space-x-1 text-gray-700 hover:text-blue-400 cursor-pointer" :class="route.query.type === 'all' ? 'font-semibold text-blue-600': ''">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
@@ -129,6 +130,7 @@ import { ref } from '@vue/reactivity';
 import { computed, onMounted, watchEffect } from '@vue/runtime-core';
 import { routerKey, useRoute, useRouter } from 'vue-router';
 import PageComponent from '../components/PageComponent.vue';
+import Search from '../components/vault/Search.vue';
 import MenuButton from '../components/vault/MenuButton.vue';
 import FolderModal from '../components/vault/FolderModal.vue';
 import VaultModal from '../components/vault/VaultModal.vue';
@@ -250,6 +252,24 @@ function moveFolder(){
 function removeItemFromList(itemIds){
     itemIds.forEach(id => vaultItems.value = vaultItems.value.filter((item)=> item.id != id));
 
+}
+
+function search(searchInp){
+    store.dispatch('search', searchInp)
+        .then(()=>{
+            router.push({
+                name:'Vaults',
+                query: {search : searchInp}
+            })
+            // setting vault items and pagination links
+            onSuccess();
+        })
+        .catch((err)=>{
+            console.log(err);
+
+            // showing error message
+            onError();
+        })
 }
 
 </script>

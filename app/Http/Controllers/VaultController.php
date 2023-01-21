@@ -51,7 +51,7 @@ class VaultController extends Controller
      * @param [type] $id
      * @return void
      */
-    public function getItem($id){
+    public function getItemById($id){
         try{
             $item = Vault::whereId($id)->first();
 
@@ -61,8 +61,22 @@ class VaultController extends Controller
 
             return abort(403,'Unauthorized Action');
         } catch(Exception $e){
-            return response($e->getMessage(), 500)
+            return response($e->getMessage(), 500);
         }
+    }
+
+
+    public function search( String $searchInp)
+    {
+        $result = Vault::latest()->where('user_id', auth()->id())
+                    ->where('name', 'like', '%' . $searchInp . '%')
+                    ->orWhere('email', 'like', '%' . $searchInp . '%')
+                    ->orWhere('category', 'like', '%' . $searchInp . '%')
+                    ->orWhere('user_name', 'like', '%' . $searchInp . '%')
+                    ->orWhere('url', 'like', '%' . $searchInp . '%')
+                    ->orWhere('notes', 'like', '%' . $searchInp . '%')->paginate(20);
+
+        return VaultResource::collection($result);
     }
 
     /**
@@ -231,117 +245,118 @@ public function export(Request $request)
     }
 }
 
-    /**
-     * import csv file
-     *
-     * @param Request $request
-     * @return void
-     */
-    public function import(Request $request)
-    {
-        try{
-            $file = $request->file('csv_file');
-            $csvData = file_get_contents($file->getRealPath());
-            $rows = array_map('str_getcsv', explode("\n", $csvData));
+/**
+ * import csv file
+ *
+ * @param Request $request
+ * @return void
+ */
+public function import(Request $request)
+{
+    try{
+        $file = $request->file('csv_file');
+        $csvData = file_get_contents($file->getRealPath());
+        $rows = array_map('str_getcsv', explode("\n", $csvData));
 
-            $count = count($rows);
-            foreach ($rows as $index => $row)
-            {
-                if($index == 0 || (count($row) <= 1)) {
-                    continue;
-                }
-                $credential =  array_combine($rows[0], $row);
-
-                $credentialValidation = $this->importVaultDataValidation($credential);
-
-                if($credentialValidation === 'failed'){
-                    return response('Validation Error', 402);
-                }
-
-                if($credential['folder_name']){
-                    // if request has folder
-                    $credential['folder_id'] = $this->getFolderId($credential['folder_name']);
-                }else{
-                    $credential['folder_id'] = null;
-                }
-
-                $credential['user_id'] = auth()->id();
-                Vault::create($credential);
+        $count = count($rows);
+        foreach ($rows as $index => $row)
+        {
+            if($index == 0 || (count($row) <= 1)) {
+                continue;
             }
-        } catch(Exception $e){
-            return response($e->getMessage(), 500);
-        }
-    }
+            $credential =  array_combine($rows[0], $row);
 
-    private function importVaultDataValidation($credential)
-    {
-        try{
+            $credentialValidation = $this->importVaultDataValidation($credential);
 
-        // checking category required and string
-       if ((strlen($credential['category']) <= 0 ) || !(is_string($credential['category']))) {
-        return 'failed';
-       }
+            if($credentialValidation === 'failed'){
+                return response('Validation Error', 402);
+            }
 
-        // checking name required and string
-       if ((strlen($credential['name']) <= 0 ) || !(is_string($credential['name']))) {
-        return 'failed';
-       }
-
-        // checking user_name string
-        if (!(is_string($credential['user_name']))) {
-            return 'failed';
-        }
-
-        // checking email string
-        if (!(is_string($credential['email']))) {
-            return 'failed';
-        }
-
-        // checking password string
-        if (!(is_string($credential['password']))) {
-            return 'failed';
-        }
-
-        // checking category url
-        if (!(is_string($credential['url']))) {
-            return 'failed';
-        }
-
-        // checking category string
-        if (!(is_string($credential['notes']))) {
-            return 'failed';
-        }
-        } catch(Exception $e){
-            return response($e->getMessage(), 500);
-        }
-    }
-
-    private function getFolderId($name){
-        // if request has folder
-        try{
-            if($name){
-
-                $exists = User::where('name', $name)->exists();
-                if($exists){
-                    echo "value exist in table";
-                    $folder = Folder::where('name', $name)->first();
-                } else{
-                    if(is_string($name)){
-                        $credential['name'] = $name;
-                        $credential['user_id'] = auth()->id();
-                        $folder = Folder::create($name);
-                    }
-                }
-                // get the Folder id
-                return $folder->id;
-
+            if($credential['folder_name']){
+                // if request has folder
+                $credential['folder_id'] = $this->getFolderId($credential['folder_name']);
             }else{
-                return null;
+                $credential['folder_id'] = null;
             }
-        } catch (Exception $e){
-            return response($e->getMessage(), 500);
+
+            $credential['user_id'] = auth()->id();
+            Vault::create($credential);
         }
+        return response('success', 200);
+    } catch(Exception $e){
+        return response($e->getMessage(), 500);
     }
+}
+
+private function importVaultDataValidation($credential)
+{
+    try{
+
+    // checking category required and string
+    if ((strlen($credential['category']) <= 0 ) || !(is_string($credential['category']))) {
+    return 'failed';
+    }
+
+    // checking name required and string
+    if ((strlen($credential['name']) <= 0 ) || !(is_string($credential['name']))) {
+    return 'failed';
+    }
+
+    // checking user_name string
+    if (!(is_string($credential['user_name']))) {
+        return 'failed';
+    }
+
+    // checking email string
+    if (!(is_string($credential['email']))) {
+        return 'failed';
+    }
+
+    // checking password string
+    if (!(is_string($credential['password']))) {
+        return 'failed';
+    }
+
+    // checking category url
+    if (!(is_string($credential['url']))) {
+        return 'failed';
+    }
+
+    // checking category string
+    if (!(is_string($credential['notes']))) {
+        return 'failed';
+    }
+    } catch(Exception $e){
+        return response($e->getMessage(), 500);
+    }
+}
+
+private function getFolderId($name){
+    // if request has folder
+    try{
+        if($name){
+
+            $exists = User::where('name', $name)->exists();
+            if($exists){
+                echo "value exist in table";
+                $folder = Folder::where('name', $name)->first();
+            } else{
+                if(is_string($name)){
+                    $credential['name'] = $name;
+                    $credential['user_id'] = auth()->id();
+                    $folder = Folder::create($credential);
+                }
+            }
+            // get the Folder id
+            return $folder->id;
+
+        }else{
+            return null;
+        }
+    } catch (Exception $e){
+        return response($e->getMessage(), 500);
+    }
+}
 
 
 }

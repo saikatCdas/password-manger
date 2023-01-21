@@ -29,9 +29,10 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::post('/create-vault', [VaultController::class, 'store']);
     Route::put('/update-vault', [VaultController::class, 'update']);
     Route::get('/get-all-vault/{type}', [VaultController::class, 'getVaultItems']);
-    Route::get('/get-item/{id}', [VaultController::class, 'getItem']);
+    Route::get('/get-item/{id}', [VaultController::class, 'getItemById']);
     Route::delete('/delete-selected-vault-item/{itemId}', [VaultController::class, 'destroy']);
     Route::put('/move-folder', [VaultController::class, 'moveFolder']);
+    Route::get('/search/{searchInp}', [VaultController::class, 'search']);
 });
 
 

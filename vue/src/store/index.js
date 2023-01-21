@@ -20,6 +20,12 @@ const store = createStore({
     },
     getters:{},
     actions:{
+        search({commit}, searchInp){
+            return axiosClient.get(`/search/${searchInp}`)
+            .then(({data})=>{
+                commit('setVaultItems', data);
+            });
+        },
         import({commit}, data){
             return axiosClient.post('/import', data);
         },
