@@ -158,10 +158,11 @@ function allVaultItems (type){
 
 // get vault Items by Folder
 function allVaultItemsByFolder (folder){
+    folder.id = folder.id || null;
     loading.value = true
     router.push({
         name: 'Vaults',
-        query:{ folder:  folder.name.toLowerCase()}
+        query:{ folder:  folder.name.toLowerCase(), id: folder.id}
     });
     getVaultItems({id:folder.id});
 }
@@ -187,7 +188,7 @@ onMounted(()=>{
     if(route.query.type){
         allVaultItems(route.query.type);
     }else if(route.query.folder){
-        allVaultItemsByFolder(route.query.folder)
+        allVaultItemsByFolder({name:route.query.folder, id:route.query.id})
     } else{
         getVaultItems ({category: 'all'});
     }
