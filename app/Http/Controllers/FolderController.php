@@ -15,7 +15,7 @@ class FolderController extends Controller
     public function allFolder(){
         $folders = auth()->user()->folders()->get();
 
-        return $folders;
+        return response($folders, 200);
 
     }
 
@@ -32,6 +32,6 @@ class FolderController extends Controller
         $folderName['user_id'] = auth()->id();
         Folder::create($folderName);
 
-        return $this->allFolder();
+        return response('Success', 200);
     }
 }

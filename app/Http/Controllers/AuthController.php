@@ -6,23 +6,29 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Resources\UserResource;
 use App\Http\Requests\StoreUserRequest;
+use Exception;
 use Illuminate\Support\Facades\Auth;
+use Throwable;
 
 class AuthController extends Controller
 {
     public function register(StoreUserRequest $request)
     {
-        $data = $request->validated();
+        try{
+            $data = $request->validated();
 
-        $data['password'] = bcrypt($data['password']);
+            $data['password'] = bcrypt($data['password']);
 
-        $user = User::create($data);
-        $token = $user->createToken('main')->plainTextToken;
+            $user = User::create($data);
+            $token = $user->createToken('main')->plainTextToken;
 
-        return response([
-            'user' => new UserResource($user),
-            'token' => $token
-        ]);
+            return response([
+                'user' => new UserResource($user),
+                'token' => $token
+            ], 200);
+        }catch(Exception $e){
+            return $e->getMessage();
+        }
     }
 
     public function login(Request $request)
@@ -50,7 +56,7 @@ class AuthController extends Controller
         return response([
             'user' => new UserResource($user),
             'token' => $token
-        ]);
+        ], 200);
     }
 
     public function logout(Request  $request)

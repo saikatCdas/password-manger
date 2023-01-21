@@ -16,13 +16,13 @@ use App\Http\Controllers\VaultController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::post('/import', [VaultController::class, 'import']);
-Route::get('/export', [VaultController::class, 'export']);
 
 Route::middleware('auth:sanctum')->group(function(){
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
+    Route::post('/import', [VaultController::class, 'import']);
+    Route::get('/export', [VaultController::class, 'export']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/create-folder', [FolderController::class, 'create']);
     Route::get('/get-folder', [FolderController::class, 'allFolder']);
