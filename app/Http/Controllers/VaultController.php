@@ -178,10 +178,50 @@ class VaultController extends Controller
      */
     public function export()
     {
-        $data = DB::table('vaults')->get();
+        $data = Vault::get();
         $csvExporter = new \Laracsv\Export();
-        $csvExporter->build($data, ['user_id', 'folder_id', 'category', 'email', 'name'])->download();
+        $csvExporter->build($data, ['user_id', 'folder_id', 'category', 'email', 'name', 'user_name' , 'password', 'url', 'notes']);
+        $csvExporter->download();
     }
+
+//     public function export(Request $request)
+// {
+//    $fileName = 'tasks.csv';
+//    $tasks = Vault::all();
+
+//         $headers = array(
+//             "Content-type"        => "text/csv",
+//             "Content-Disposition" => "attachment; filename=$fileName",
+//             "Pragma"              => "no-cache",
+//             "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+//             "Expires"             => "0"
+//         );
+
+//         $columns = array('user_id', 'folder_id', 'category', 'email', 'name', 'user_name' , 'password', 'url', 'notes');
+
+//         $callback = function() use($tasks, $columns) {
+//             $file = fopen('php://output', 'w');
+//             fputcsv($file, $columns);
+
+//             foreach ($tasks as $task) {
+//                 $row['user_id']  = $task->user_id;
+//                 $row['folder_id']    = $task->folder_id;
+//                 $row['category']    = $task->category;
+//                 $row['email']  = $task->email;
+//                 $row['name']  = $task->name;
+//                 $row['user_name']  = $task->user_name;
+//                 $row['password']  = $task->password;
+//                 $row['url']  = $task->url;
+//                 $row['notes']  = $task->notes;
+
+//                 fputcsv($file, array($row['user_id'], $row['folder_id'], $row['category'], $row['email'], $row['name'], $row['user_name'], $row['password'], $row['url'], $row['notes']));
+//             }
+
+//             fclose($file);
+//         };
+
+//         return response()->stream($callback, 200, $headers);
+//     }
 
     /**
      * import csv file
@@ -194,19 +234,18 @@ class VaultController extends Controller
         $file = $request->file('csv_file');
         $csvData = file_get_contents($file->getRealPath());
         $rows = array_map('str_getcsv', explode("\n", $csvData));
-        $header = array_shift($rows);
-        $csv = array();
-        foreach ($rows as $row) {
-            // return $row[0];
-            dd($row, 'jdhjhd');
-            Vault::create([
-                'name' => $row[0],
-                'email' => $row[1],
-                'password' => 'at@S1998'
-            ]);
+
+        $count = count($rows);
+        foreach ($rows as $index => $row)
+        {
+            if($index == 0 || (count($row) <= 1)) {
+                continue;
+            }
+            $data =  array_combine($rows[0], $row);
+            // return $data;
+            Vault::create($data);
         }
         // do something with the csv data
-        return $csv;
     }
 
     private function getFolderId($request){

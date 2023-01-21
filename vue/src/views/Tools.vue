@@ -1,6 +1,6 @@
 <template>
     <PageComponent>
-        <div class="flex max-sm:flex-col max-sm:space-y-6 sm:space-x-6 mt-4 min-h-screen h-full">
+        <div class="flex max-sm:flex-col max-sm:space-y-6 sm:space-x-6 mt-4 min-h-screen h-full max-md:px-4">
             <div class="">
                 <div class="bg-white rounded-lg sm:rounded-md border  border-gray-400 w-full sm:w-52">
                     <div class=" bg-gray-100  rounded-md py-2 px-4">
@@ -9,29 +9,40 @@
                     <hr>
                     <div v-for="(item, ind) in navigation" :key="ind" class="">
                         <div class="py-2 px-4 flex">
-                            <router-link :to="item.to" :class="[ route.name === item.to.name ?'text-gray-800 text-lg font-medium': 'text-gray-500', ' hover:underline']"> {{ item.name }} </router-link>
+                            <button @click.prevent="getPage(item)" :class="[ page === item ? 'text-blue-700 text-lg font-medium' : 'text-gray-500', ' hover:text-blue-400']"> {{ item }} </button>
                         </div>
                         <hr>
                     </div>
                 </div>
             </div>
             <div class="w-full">
-                <router-view></router-view>
+                <Generator v-if="page === 'generator'"/>
+                <Imports v-if="page === 'import Data'"/>
+                <Exports v-if="page === 'export Vault'"/>
             </div>
         </div>
     </PageComponent>
 </template>
 
 <script setup>
-import { useRoute } from 'vue-router';
+import { ref } from '@vue/reactivity';
+import { useRouter } from 'vue-router';
 import PageComponent from '../components/PageComponent.vue';
+import Exports from '../components/Tools/Exports.vue';
+import Generator from '../components/Tools/Generator.vue';
+import Imports from '../components/Tools/Imports.vue';
 
-const route = useRoute();
-const navigation = [
-    {name: 'Generator', to:{name: 'PasswordGenerator'}},
-    {name: 'Imports', to:{name: 'Imports'}},
-    {name: 'Exports', to:{name: 'Exports'}},
-]
+const page = ref('generator');
+const navigation = ['Generator', 'Import Data', 'Export Vault'];
+const router = useRouter();
+
+function getPage(pageName){
+    page.value = pageName.toLowerCase();
+    router.push({
+        query:{page: pageName.toLowerCase()}
+    })
+};
+
 </script>
 
 <style>

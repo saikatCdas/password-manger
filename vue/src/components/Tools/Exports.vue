@@ -1,5 +1,11 @@
 <template>
-    <a href="#" @click.prevent="exportData" class="px-3 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-sm text-gray-100 hover:text-white">Export Data</a>
+    <div>
+        <h1 class="text-3xl text-gray-700">Export Vault</h1>
+        <hr class="mt-4">
+    </div>
+    <div class="mt-4">
+        <a href="#" @click.prevent="exportData" class="py-2 px-3 text-lg rounded-md bg-emerald-500 hover:bg-emerald-600 text-white">Export Data</a>
+    </div>
 </template>
 
 <script setup>
@@ -18,6 +24,10 @@ function exportData() {
             link.click();
         }).catch((error)=>{
             console.log(error);
+            store.commit("notify", {
+                type: "failed",
+                message: "Something is wrong !! ",
+            });
         })
     }
 

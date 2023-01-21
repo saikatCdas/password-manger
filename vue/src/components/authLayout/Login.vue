@@ -10,7 +10,7 @@
             </svg>
         </span>
         </Alert>
-        <h2 class="text-lg font-medium mb-4 text-center">Create Account</h2>
+        <h2 class="text-lg font-medium mb-4 text-center">Login</h2>
         <div class="mb-4">
             <label class="block text-gray-700 font-medium mb-2" for="email">
             Email

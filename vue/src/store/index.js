@@ -20,6 +20,9 @@ const store = createStore({
     },
     getters:{},
     actions:{
+        import({commit}, data){
+            return axiosClient.post('/import', data);
+        },
         moveFolder({commit}, data){
             return axiosClient.put('/move-folder', data);
         },

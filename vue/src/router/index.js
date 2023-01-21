@@ -8,8 +8,6 @@ import Vaults from '../views/Vaults.vue';
 import VaultItemView from '../components/vault/VaultModal.vue';
 import Tools from '../views/Tools.vue';
 import PasswordGenerator from '../components/Tools/Generator.vue';
-import Imports from '../components/Tools/Imports.vue';
-import Exports from '../components/Tools/Exports.vue';
 import store from '../store';
 
 
@@ -21,13 +19,7 @@ const routes = [
         meta: { requiresAuth: true },
         children: [
             {path: '/vaults', name: 'Vaults', component: Vaults},
-            {path: '/tools', redirect: '/tools/password-generator', name: 'PasswordGenerator', component: Tools,
-            children:[
-                {path: '/tools/password-generator', name:'PasswordGenerator', component:PasswordGenerator},
-                {path: '/tools/imports', name:'Imports', component:Imports},
-                {path: '/tools/exports', name:'Exports', component:Exports},
-            ]
-            },
+            {path: '/tools', name: 'PasswordGenerator', component: Tools,},
             {path: 'vault/item/add', name:'VaultItemAdd', component: VaultItemView},
             {path: 'vault/item/edit:', name:'VaultItemEdit', component: VaultItemView},
         ],
