@@ -74,7 +74,7 @@ class VaultController extends Controller
             $vaultIntiData = $request->validated();
 
             // if request has folder
-            $vaultIntiData['folder_id'] = $this->getFolderId($request);
+            $vaultIntiData['folder_id'] = $this->getFolderId($request->folder);
 
             $vaultIntiData['user_id'] = auth()->id();
 
@@ -101,7 +101,7 @@ class VaultController extends Controller
             $vaultIntiData = $request->validated();
 
             // if request has folder
-            $vaultIntiData['folder_id'] = $this->getFolderId($request);
+            $vaultIntiData['folder_id'] = $this->getFolderId($request->folder);
 
             $vaultIntiData['user_id'] = auth()->id();
 
@@ -176,52 +176,52 @@ class VaultController extends Controller
      *
      * @return void
      */
-    public function export()
-    {
-        $data = Vault::get();
-        $csvExporter = new \Laracsv\Export();
-        $csvExporter->build($data, ['user_id', 'folder_id', 'category', 'email', 'name', 'user_name' , 'password', 'url', 'notes']);
-        $csvExporter->download();
-    }
+    // public function export()
+    // {
+    //     $data = Vault::get();
+    //     $csvExporter = new \Laracsv\Export();
+    //     $csvExporter->build($data, ['user_id', 'folder_id', 'category', 'email', 'name', 'user_name' , 'password', 'url', 'notes']);
+    //     $csvExporter->download();
+    // }
 
-//     public function export(Request $request)
-// {
-//    $fileName = 'tasks.csv';
-//    $tasks = Vault::all();
+public function export(Request $request)
+{
+    $fileName = 'vaultItems.csv';
+    $tasks = Vault::where('user_id', auth()->id())->get();
 
-//         $headers = array(
-//             "Content-type"        => "text/csv",
-//             "Content-Disposition" => "attachment; filename=$fileName",
-//             "Pragma"              => "no-cache",
-//             "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
-//             "Expires"             => "0"
-//         );
+    $headers = array(
+        "Content-type"        => "text/csv",
+        "Content-Disposition" => "attachment; filename=$fileName",
+        "Pragma"              => "no-cache",
+        "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+        "Expires"             => "0"
+    );
 
-//         $columns = array('user_id', 'folder_id', 'category', 'email', 'name', 'user_name' , 'password', 'url', 'notes');
+    $columns = array('user_id', 'folder_id', 'category', 'email', 'name', 'user_name' , 'password', 'url', 'notes');
 
-//         $callback = function() use($tasks, $columns) {
-//             $file = fopen('php://output', 'w');
-//             fputcsv($file, $columns);
+    $callback = function() use($tasks, $columns) {
+        $file = fopen('php://output', 'w');
+        fputcsv($file, $columns);
 
-//             foreach ($tasks as $task) {
-//                 $row['user_id']  = $task->user_id;
-//                 $row['folder_id']    = $task->folder_id;
-//                 $row['category']    = $task->category;
-//                 $row['email']  = $task->email;
-//                 $row['name']  = $task->name;
-//                 $row['user_name']  = $task->user_name;
-//                 $row['password']  = $task->password;
-//                 $row['url']  = $task->url;
-//                 $row['notes']  = $task->notes;
+        foreach ($tasks as $task) {
+            $row['user_id']  = $task->user_id;
+            $row['folder_id']    = $task->folder_id;
+            $row['category']    = $task->category;
+            $row['email']  = $task->email;
+            $row['name']  = $task->name;
+            $row['user_name']  = $task->user_name;
+            $row['password']  = $task->password;
+            $row['url']  = $task->url;
+            $row['notes']  = $task->notes;
 
-//                 fputcsv($file, array($row['user_id'], $row['folder_id'], $row['category'], $row['email'], $row['name'], $row['user_name'], $row['password'], $row['url'], $row['notes']));
-//             }
+            fputcsv($file, array($row['user_id'], $row['folder_id'], $row['category'], $row['email'], $row['name'], $row['user_name'], $row['password'], $row['url'], $row['notes']));
+        }
 
-//             fclose($file);
-//         };
+        fclose($file);
+    };
 
-//         return response()->stream($callback, 200, $headers);
-//     }
+    return response()->stream($callback, 200, $headers);
+}
 
     /**
      * import csv file
@@ -241,19 +241,72 @@ class VaultController extends Controller
             if($index == 0 || (count($row) <= 1)) {
                 continue;
             }
-            $data =  array_combine($rows[0], $row);
-            // return $data;
-            Vault::create($data);
+            $credential =  array_combine($rows[0], $row);
+
+            $credentialValidation = $this->importVaultDataValidation($credential);
+
+            if($credentialValidation === 'failed'){
+                return response(402, 'Validation Error');
+            }
+
+            if($credential['folder_name']){
+                // if request has folder
+                $credential['folder_id'] = $this->getFolderId($credential['folder_name']);
+            }else{
+                $credential['folder_id'] = null;
+            }
+
+            $credential['user_id'] = auth()->id();
+            // Vault::create($data);
         }
         // do something with the csv data
     }
 
-    private function getFolderId($request){
+    private function importVaultDataValidation($credential) {
+
+        // checking category required and string
+       if ((count($credential['category']) <= 0 ) || !(is_string($credential['category']))) {
+        return 'failed';
+       }
+
+        // checking name required and string
+       if ((count($credential['name']) <= 0 ) || !(is_string($credential['name']))) {
+        return 'failed';
+       }
+
+        // checking user_name string
+        if (!(is_string($credential['user_name']))) {
+            return 'failed';
+        }
+
+        // checking email string
+        if (!(is_string($credential['email']))) {
+            return 'failed';
+        }
+
+        // checking password string
+        if (!(is_string($credential['password']))) {
+            return 'failed';
+        }
+
+        // checking category url
+        if (!(is_string($credential['url']))) {
+            return 'failed';
+        }
+
+        // checking category string
+        if (!(is_string($credential['notes']))) {
+            return 'failed';
+        }
+
+    }
+
+    private function getFolderId($folder){
         // if request has folder
-        if($request->folder){
+        if($folder){
 
             // get the Folder id
-            $folder = Folder::where('name', $request->folder)->first();
+            $folder = Folder::where('name', $folder)->first();
             return $folder->id;
 
         }else{
