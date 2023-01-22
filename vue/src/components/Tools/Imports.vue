@@ -28,7 +28,6 @@ function submitFile (){
 // Get the file from the input
     const file = fileInput.value.files[0];
 
-    console.log(file);
     // Checking Extension
     let extensionNotMatch = checkingFileExtension(file.name)
     if(extensionNotMatch){

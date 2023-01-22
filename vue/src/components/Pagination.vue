@@ -29,7 +29,10 @@
   <script setup>
 
 
-  const props = defineProps(['paginationLinks']);
+  const props = defineProps({
+    paginationLinks: Array
+  });
+  console.log(props.paginationLinks);
   const emit = defineEmits(['getForPage']);
 
 

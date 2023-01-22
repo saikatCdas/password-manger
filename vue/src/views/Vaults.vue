@@ -207,7 +207,6 @@ function onSuccess(){
 }
 // if function reject
 function onError(err){
-    // console.log(err);
     loading.value = false;
     store.commit("notify", {
         type: "failed",
@@ -266,7 +265,6 @@ function search(searchInp){
         })
         .catch((err)=>{
             console.log(err);
-
             // showing error message
             onError();
         })

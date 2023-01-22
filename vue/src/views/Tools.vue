@@ -48,7 +48,6 @@ onMounted(()=>{
 // navigating throw page
 function getPage(pageName){
     page.value = pageName.toLowerCase();
-    console.log(page.value);
     router.push({
         query:{page: pageName.toLowerCase()}
     })

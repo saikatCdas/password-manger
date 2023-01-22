@@ -10,7 +10,6 @@
 
 <script setup>
 import { computed } from "@vue/runtime-core";
-import axiosClient from "../../axios";
 import store from "../../store";
 
 function exportData() {

@@ -43,7 +43,9 @@ import { useRouter } from "vue-router";
 import store from "../../store";
 
 
-const props = defineProps(['modalOpen']);
+const props = defineProps({
+    modalOpen:Boolean
+});
 const emit = defineEmits(['modalClose']);
 const router = useRouter();
 
