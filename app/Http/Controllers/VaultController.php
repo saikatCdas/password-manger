@@ -277,10 +277,10 @@ class VaultController extends Controller
                     return response('Validation Error', 402);
                 }
 
-                if($credential['folder_name']){
+                if(isset($credential['folder_name'])){
                     // if request has folder
                     $credential['folder_id'] = $this->getFolderId($credential['folder_name']);
-                }elseif ($credential['folder_id']) {
+                }elseif (isset($credential['folder_id'])) {
                     // if request has folder_id
                     $folderId = Folder::whereId($credential['folder_id'])->exists();
                     $credential['folder_id'] = $folderId ? $credential['folder_id'] : null;
