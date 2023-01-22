@@ -16,9 +16,9 @@
         <div class="mt-4 text-gray-600">
             <h2 class="font-semibold ">What would you like to generate??</h2>
             <div class="mt-1 flex items-center">
-                <input type="radio" v-model="selectedOption" :value="'password'" name="password" :class="'form-radio w-3 h-3 rounded-full'">
+                <input type="radio" @change="generatePassword" v-model="selectedOption" :value="'password'" name="password" :class="'form-radio w-3 h-3 rounded-full'">
                 <label :class="'ml-2 text-[15px]'" for="password">Password</label>
-                <input type="radio" v-model="selectedOption" :value="'passphrase'" name="passphrase" :class="'form-radio w-3 h-3 rounded-full ml-4'">
+                <input type="radio" @change="generatePassword" v-model="selectedOption" :value="'passphrase'" name="passphrase" :class="'form-radio w-3 h-3 rounded-full ml-4'">
                 <label :class="'ml-2 text-[15px]'" for="passphrase">Passphrase</label>
             </div>
         </div>
@@ -41,7 +41,7 @@
 
 <script setup>
 import { ref } from "@vue/reactivity";
-import { onMounted} from "@vue/runtime-core";
+import { onMounted, watchEffect} from "@vue/runtime-core";
 import Password from "./Password.vue";
 import Passphrase from "./Passphrase.vue";
 import store from "../../store";
@@ -65,6 +65,8 @@ function generatePassword(){
         });
     }
 }
+
+
 
 // set password value
 function setPasswordValue(pd){
