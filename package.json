@@ -12,6 +12,5 @@
         "vite": "^4.0.0"
     },
     "dependencies": {
-        "vercel-php": "^0.5.2"
     }
 }
